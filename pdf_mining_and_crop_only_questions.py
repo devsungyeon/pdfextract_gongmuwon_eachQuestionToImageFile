@@ -8,9 +8,30 @@ from pdfminer.pdfdevice import PDFDevice
 from pdfminer.layout import LAParams
 from pdfminer.converter import PDFPageAggregator
 import pdfminer
+import PyPDF2
+#import PyPDF2
 
 
 li = [] # questions location list
+
+def extract_tree(in_file, locli, pagenum):
+    with open(in_file, 'rb') as infp:
+        # Read the document that contains the tree (in its first page)
+        reader = PyPDF2.PdfFileReader(infp)
+        page = reader.getPage(pagenum)
+        
+        for q in range(len(locli)-1): #595, 841
+            # Crop the tree. Coordinates below are only referential
+            page.cropBox.lowerLeft =  [  locli[q][0],     841-locli[q+1][1]+15    ]#[100,200]
+            page.cropBox.upperRight = [  locli[q][0]+280, 841-locli[q][1]  +15  ]#[250,300]
+            # Create an empty document and add a single page containing only the cropped page
+            writer = PyPDF2.PdfFileWriter()
+            writer.addPage(page)
+            out_file = infp.name[0:5] + str(locli[q][2]) + ".pdf"
+            with open(out_file, 'wb') as outfp:
+                writer.write(outfp)
+
+
 class pdfPositionHandling:
     
     def parse_obj(self, lt_objs):
@@ -19,7 +40,7 @@ class pdfPositionHandling:
         for obj in lt_objs:
 
             if isinstance(obj, pdfminer.layout.LTTextLine):
-                #print("%6d, %6d, %s" % (obj.bbox[0], obj.bbox[1], obj.get_text().replace('\n', '_'))) 
+                print("%6d, %6d, %s" % (obj.bbox[0], obj.bbox[1], obj.get_text().replace('\n', '_'))) 
                 temp_txt = obj.get_text().replace('\n', '_')
                 if temp_txt[0:2] == "문 ":
                     temp = []
@@ -81,8 +102,10 @@ class pdfPositionHandling:
                 # extract text from this object
                 self.parse_obj(layout._objs)
                 
-                
                 li.sort(key=lambda x:x[2])
+                if len(li) != 0:
+                    extract_tree(filename, li, i)
+
                 print(li)
                 del li[:]
 
