@@ -38,9 +38,17 @@ def extract_tree(in_file, locli, pagenum):
             out_file = infp.name[0:5] + str(locli[q][2]) + ".pdf"
             with open(out_file, 'wb') as outfp:
                 writer.write(outfp)
+        # last question write
+        page.cropBox.lowerLeft =  [  locli[len(locli)-1][0],     0  ]
+        page.cropBox.upperRight = [  locli[len(locli)-1][0]+280, locli[len(locli)-1][1]   +15  ]
+
+        writer = PyPDF2.PdfFileWriter()
+        writer.addPage(page)
+        out_file = infp.name[0:5] + str(locli[len(locli)-1][2]) + ".pdf"
+        with open(out_file, 'wb') as outfp:
+            writer.write(outfp)
 
 class pdfPositionHandling:
-    
     def parse_obj(self, lt_objs):
 
         # loop over the object list
@@ -101,20 +109,20 @@ class pdfPositionHandling:
         i = 0
         # loop over all pages in the document
         for page in PDFPage.create_pages(document):
-            if i >= startpage and i <= endpage:
-                # read the page into a layout object
-                interpreter.process_page(page)
-                layout = device.get_result()
+            #if i >= startpage and i <= endpage:
+            # read the page into a layout object
+            interpreter.process_page(page)
+            layout = device.get_result()
 
-                # extract text from this object
-                self.parse_obj(layout._objs)
-                
-                li.sort(key=lambda x:x[2])
-                if len(li) != 0:
-                    extract_tree(filename, li, i)
+            # extract text from this object
+            self.parse_obj(layout._objs)
 
-                print(li)
-                del li[:]
+            li.sort(key=lambda x:x[2])
+            if len(li) != 0:
+                extract_tree(filename, li, i)
+
+            print(li)
+            del li[:]
 
 
             i += 1
