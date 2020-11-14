@@ -9,13 +9,14 @@ from pdfminer.layout import LAParams
 from pdfminer.converter import PDFPageAggregator
 import pdfminer
 import PyPDF2
+import os
 # import PyPDF2
 
 
 li = []
 # questions location list
 
-def extract_tree(in_file, locli, pagenum):
+def extract_tree(in_file,dirname,filename, locli, pagenum):
     with open(in_file, 'rb') as infp:
         # Read the document that contains the tree (in its first page)
         reader = PyPDF2.PdfFileReader(infp)
@@ -35,7 +36,9 @@ def extract_tree(in_file, locli, pagenum):
 
             writer = PyPDF2.PdfFileWriter()
             writer.addPage(page)
-            out_file = infp.name[0:5] + str(locli[q][2]) + ".pdf"
+            # infp.name[0:5] + str(locli[q][2]) + ".pdf"
+            out_file = filename[0:8] + str(locli[q][2]) + ".pdf"
+            out_file = os.path.join(dirname, out_file)
             with open(out_file, 'wb') as outfp:
                 writer.write(outfp)
         # last question write
@@ -44,7 +47,8 @@ def extract_tree(in_file, locli, pagenum):
 
         writer = PyPDF2.PdfFileWriter()
         writer.addPage(page)
-        out_file = infp.name[0:5] + str(locli[len(locli)-1][2]) + ".pdf"
+        out_file = filename[0:8] + str(locli[len(locli)-1][2]) + ".pdf"
+        out_file = os.path.join(dirname, out_file)
         with open(out_file, 'wb') as outfp:
             writer.write(outfp)
 
@@ -73,10 +77,10 @@ class pdfPositionHandling:
             elif isinstance(obj, pdfminer.layout.LTFigure):
                 self.parse_obj(obj._objs)
 
-    def parsepdf(self, filename, startpage, endpage):
+    def parsepdf(self, full_filename,dirname,filename, startpage, endpage):
 
         # Open a PDF file.
-        fp = open(filename, 'rb')
+        fp = open(full_filename, 'rb')
 
         # Create a PDF parser object associated with the file object.
         parser = PDFParser(fp)
@@ -119,10 +123,7 @@ class pdfPositionHandling:
 
             li.sort(key=lambda x:x[2])
             if len(li) != 0:
-                extract_tree(filename, li, i)
-
-            print(li)
+                extract_tree(full_filename, dirname, filename, li, i)
+            # print(li)
             del li[:]
-
-
             i += 1
