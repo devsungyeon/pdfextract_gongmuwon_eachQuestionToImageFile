@@ -21,4 +21,4 @@ def search(dirname):
         pass
 
 search("C:/Users/LSY/OneDrive/Archive/전산공부/0_전산공무원문제정리/")
-#t.parsepdf("C:/Users/LSY/OneDrive/Archive/전산공부/0_전산공무원문제정리/7급/7급_데이터베이스/2014_7급_데이터베이스론-A.pdf","C:/Users/LSY/OneDrive/Archive/전산공부/0_전산공무원문제정리/7급/7급_데이터베이스/","2014_7급_데이터베이스론-A.pdf",0,0)
+
