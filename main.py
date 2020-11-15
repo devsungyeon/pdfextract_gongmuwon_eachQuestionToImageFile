@@ -2,7 +2,6 @@ import pdf_mining_and_crop_only_questions
 import os
 
 t = pdf_mining_and_crop_only_questions.pdfPositionHandling()
-file = "2019_국가직_9급_컴퓨터일반(나)_2019년.pdf"
 
 def search(dirname):
     try:
@@ -20,5 +19,5 @@ def search(dirname):
     except PermissionError:
         pass
 
-search("C:/Users/LSY/OneDrive/Archive/전산공부/0_전산공무원문제정리/")
+search("C:\\Users\\LSY\\OneDrive\\Archive\\ITstudy\\0_전산공무원문제정리\\")
 
